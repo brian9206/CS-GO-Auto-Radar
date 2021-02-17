@@ -31,8 +31,8 @@
 #define TAR_MAX_LAYERS 5
 #define TAR_AO_SAMPLES 256
 
-std::string g_game_path = "D:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/csgo";
-std::string g_mapfile_path = "sample_stuff/de_tavr_test";
+std::string g_game_path = "";
+std::string g_mapfile_path = "";
 std::string g_mapname;
 std::string g_mapfile_name;
 std::string g_folder_overviews;
@@ -81,7 +81,8 @@ void save_to_dds(int x, int y, const char* filepath, IMG imgmode = IMG::MODE_DXT
 //#define _DEBUG
 
 int app(int argc, const char** argv) {
-#ifndef _DEBUG
+// really a bad way to debug like this.. setup your visual studio properly!
+//#ifndef _DEBUG
 #pragma region cxxopts
 	cxxopts::Options options("AutoRadar", "Auto radar");
 	options.add_options()
@@ -121,7 +122,7 @@ int app(int argc, const char** argv) {
 	//m_renderWidth = result["width"].as<uint32_t>();
 	//m_renderHeight = result["height"].as<uint32_t>();
 #pragma endregion
-#endif
+//#endif
 
 	g_mapfile_name = split(g_mapfile_path, '/').back();
 	g_folder_overviews = g_game_path + "/resource/overviews/";
@@ -159,7 +160,7 @@ int app(int argc, const char** argv) {
 	vfilesys* filesys = new vfilesys(g_game_path + "/gameinfo.txt");
 
 	vmf::LinkVFileSystem(filesys);
-	g_vmf_file = vmf::from_file(g_mapfile_path + ".vmf");
+	g_vmf_file = vmf::from_file(g_mapfile_path + (g_mapfile_path.rfind(".vmf") == g_mapfile_path.size() - 4 ? "" :".vmf"));
 	g_vmf_file->InitModelDict();
 	g_tar_config = new tar_config(g_vmf_file);
 

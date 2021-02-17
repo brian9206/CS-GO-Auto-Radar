@@ -14,8 +14,8 @@ public:
 
 	// Paths
 	std::string dir_gamedir;  // Where the gameinfo.txt is (and where we should output to)
-	std::string dir_exedir;   // Counter-Strike Global Offensive directory
-	std::string dir_bin;      // exedir + /bin/ folder
+	//std::string dir_exedir;   // Counter-Strike Global Offensive directory
+	//std::string dir_bin;      // exedir + /bin/ folder
 
 	std::vector<std::string> searchPaths; // List of paths to search for stuff (these are all absolute)
 
@@ -41,7 +41,7 @@ public:
 		// Look for csgo.exe to set exedir
 		std::string dir_upOne = this->dir_gamedir + "../"; // go up to csgo.exe (or at least it should be here)
 
-		std::cout << dir_upOne << "\n";
+		/*std::cout << dir_upOne << "\n";
 
 		if (exedir != "") 
 			if(fs::checkFileExist((exedir + "/csgo.exe").c_str())) this->dir_exedir = exedir + "/";
@@ -51,13 +51,14 @@ public:
 		else throw std::exception("Can't find csgo.exe");
 
 		// Set bindir
-		this->dir_bin = this->dir_exedir + "bin/";
+		this->dir_bin = this->dir_exedir + "bin/";*/
 
+		// For some reason, it does not work
 		// Collect search paths from gameinfo.txt
 		for (auto && path : kv::getList(this->gameinfo->GetFirstByName("\"GameInfo\"")->GetFirstByName("FileSystem")->GetFirstByName("SearchPaths")->Values, "Game")) {
 			std::string _path = "";
 			if (path.find(':') != path.npos) _path = path + "/"; //this path is abs
-			else _path = this->dir_exedir + path + "/"; // relative path to exedir
+			else _path = dir_upOne + path + "/"; // relative path to exedir
 			_path = sutil::ReplaceAll(_path, "\\", "//");
 
 			if (fs::checkFileExist(_path.c_str())) this->searchPaths.push_back(_path);
@@ -67,13 +68,13 @@ public:
 
 		// Look for pak01_dir.vpk in all search paths
 		for (auto && sp : this->searchPaths) {
-			if (fs::checkFileExist((sp + "pak01_dir.vpk").c_str())) {
-				this->vpkIndex = new vpk::index(sp + "pak01_dir.vpk");
+			if (sp.rfind(".vpk") == sp.size() - 4 && fs::checkFileExist(sp.c_str())) {
+				this->vpkIndex = new vpk::index(sp);
 				goto IL_FOUND;
 			}
 		}
 
-		std::cout << "Warning: could not find pak01_dir.vpk...\n";
+		//std::cout << "Warning: could not find pak01_dir.vpk...\n";
 
 	IL_FOUND:
 		std::cout << "Finished setting up filesystem.\n";
@@ -83,8 +84,8 @@ public:
 	void debug_info() {
 		std::cout << "Directories:\n";
 		std::cout << "  dir_game: " << dir_gamedir << "\n";
-		std::cout << "  dir_exe:  " << dir_exedir << "\n";
-		std::cout << "  dir_bin:  " << dir_bin << "\n";
+		/*std::cout << "  dir_exe:  " << dir_exedir << "\n";
+		std::cout << "  dir_bin:  " << dir_bin << "\n";*/
 
 		std::cout << "\nSearchpaths:\n";
 		for (auto && sp : this->searchPaths) std::cout << "  | " << sp << "\n";
@@ -102,7 +103,7 @@ public:
 		// 0) VPK file (actual game files)
 		// 1) anything in csgo folders
 
-		if (this->vpkIndex != NULL) {
+		/*if (this->vpkIndex != NULL) {
 			vpk::vEntry* vEntry = this->vpkIndex->find(relpath);
 
 			if (vEntry != NULL) {
@@ -113,7 +114,7 @@ public:
 				pkHandle.seekg(vEntry->entryInfo.EntryOffset); // set that ifstream to read from the correct location
 				return new T(&pkHandle);
 			}
-		}
+		}*/
 		
 		// Check all search paths for custom content
 		for (auto && sp : this->searchPaths) {

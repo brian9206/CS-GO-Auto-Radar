@@ -18,7 +18,7 @@ installer/
 *.userprefs
 
 #dependency folder
-deps/
+#deps/
 *.bsp
 *.mdl
 *.vvd
@@ -28,7 +28,7 @@ deps/
 *.vmf
 *.vmx
 *.prt
-deps.zip
+#deps.zip
 
 # Build results
 [Dd]ebug/
